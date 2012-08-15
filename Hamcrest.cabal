@@ -22,6 +22,6 @@ library
 
 Test-Suite test
   type:              exitcode-stdio-1.0
-  main-is:           Test.hs
+  main-is:           Tests.hs
   hs-source-dirs:    src, test
   build-depends:     base, QuickCheck
