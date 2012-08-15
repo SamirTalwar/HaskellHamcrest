@@ -18,7 +18,7 @@ library
   exposed-modules:   Hamcrest.Matchers, Hamcrest.Assertions
   -- other-modules:
   hs-source-dirs:    src
-  build-depends:     base
+  build-depends:     base, QuickCheck
 
 Test-Suite test
   type:              exitcode-stdio-1.0
