@@ -1,3 +1,5 @@
 module Hamcrest.Assertions where
 
-expectThat actual matcher = matcher actual
+import Hamcrest
+
+expectThat actual matcher = matcher `matches` actual

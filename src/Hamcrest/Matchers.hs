@@ -1,6 +1,9 @@
 module Hamcrest.Matchers where
 
-not_ f x = Prelude.not (f x)
+import Hamcrest
 
-equalTo :: (Eq a) => a -> a -> Bool
-equalTo = (==)
+not_ matcher = Matcher { describe = "not " ++ describe matcher,
+                         describeMismatch = ("not " ++) . (describeMismatch matcher),
+                         matches = Prelude.not . (matches matcher) }
+
+equalTo expected = Matcher (show expected) show (expected ==)
