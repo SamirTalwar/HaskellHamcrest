@@ -10,6 +10,7 @@ not_ matcher = Matcher
 equalTo expected = Matcher (show expected) show (expected ==)
 
 greaterThan value = Matcher ("greater than " ++ show value) show (> value)
+lessThan value = Matcher ("less than " ++ show value) show (< value)
 
 describesItselfAs :: (Show a) => String -> Matcher (Matcher a)
 describesItselfAs expected = Matcher
