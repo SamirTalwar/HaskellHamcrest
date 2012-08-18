@@ -52,6 +52,21 @@ lessThanOrEqualToTests =
      \x -> expectThat (lessThanOrEqualTo x) (describesItselfAs ("less than or equal to " ++ show x)),
      \x -> expectThat (lessThanOrEqualTo x) (describesAMismatchFor (x + 1) (show $ x + 1))]
 
+equalToIgnoringCaseTests :: [String -> Property]
+equalToIgnoringCaseTests =
+    [\x -> expectThat x (equalToIgnoringCase (oscillatingCase x)),
+     \x -> expectThat x (equalToIgnoringCase (map toLower x)),
+     \x -> expectThat x (equalToIgnoringCase (map toUpper x)),
+     \x -> expectThat x (not_ (equalToIgnoringCase (x ++ "a"))),
+
+     \x -> expectThat (equalToIgnoringCase x) (describesItselfAs (show x ++ " ignoring case")),
+     \x -> expectThat (equalToIgnoringCase x) (describesAMismatchFor (x ++ "bah") (show (x ++ "bah")))]
+    where
+    oscillatingCase string = oscillatingCase' True string
+    oscillatingCase' _ "" = ""
+    oscillatingCase' True (c : cs) = (toUpper c) : oscillatingCase' False cs
+    oscillatingCase' False (c : cs) = (toLower c) : oscillatingCase' True cs
+
 tests :: (Show a, Arbitrary a) => [a -> Property] -> IO [Result]
 tests = mapM quickCheckResult
 
@@ -60,4 +75,5 @@ hamcrestTests = (liftM concat) $ sequence
      tests greaterThanTests,
      tests lessThanTests,
      tests greaterThanOrEqualToTests,
-     tests lessThanOrEqualToTests]
+     tests lessThanOrEqualToTests,
+     tests equalToIgnoringCaseTests]

@@ -1,5 +1,7 @@
 module Hamcrest.Matchers where
 
+import Data.Char
+
 import Hamcrest
 
 not_ matcher = Matcher
@@ -13,6 +15,13 @@ greaterThan value = Matcher ("greater than " ++ show value) show (> value)
 lessThan value = Matcher ("less than " ++ show value) show (< value)
 greaterThanOrEqualTo value = Matcher ("greater than or equal to " ++ show value) show (>= value)
 lessThanOrEqualTo value = Matcher ("less than or equal to " ++ show value) show (<= value)
+
+equalToIgnoringCase expected = Matcher
+    { describe = show expected ++ " ignoring case",
+      describeMismatch = show,
+      matches = \actual -> upperCase expected == upperCase actual }
+    where
+    upperCase = map toUpper
 
 describesItselfAs :: (Show a) => String -> Matcher (Matcher a)
 describesItselfAs expected = Matcher
