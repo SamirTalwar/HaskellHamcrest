@@ -9,6 +9,8 @@ not_ matcher = Matcher
       describeMismatch = describeMismatch matcher,
       matches = Prelude.not . (matches matcher) }
 
+is expected = Matcher ("is " ++ show expected) (("was " ++) . show) (expected ==)
+
 equalTo expected = Matcher (show expected) show (expected ==)
 
 greaterThan value = Matcher ("greater than " ++ show value) show (> value)

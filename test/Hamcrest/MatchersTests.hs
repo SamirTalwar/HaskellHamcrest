@@ -8,6 +8,16 @@ import Test.QuickCheck
 import Hamcrest.Matchers
 import Hamcrest.Assertions (expectThat)
 
+isTests :: [(String, Int -> Property)]
+isTests =
+    [("x is x",
+      \x -> expectThat x (is x)),
+
+     ("(is x) describes itself as \"is x\"",
+      \x -> expectThat (is x) (describesItselfAs ("is " ++ show x))),
+     ("(is x) describes a mismatch for y as \"was y\"",
+      \x -> expectThat (is x) (describesAMismatchFor (x + 5) ("was " ++ show (x + 5))))]
+
 equalToTests :: [(String, Int -> Property)]
 equalToTests =
     [("x is equal to x",
@@ -102,7 +112,8 @@ tests cases = do
     mapM quickCheckResult $ map (uncurry label) cases
 
 hamcrestTests = (liftM concat) $ sequence
-    [tests equalToTests,
+    [tests isTests,
+     tests equalToTests,
      tests greaterThanTests,
      tests lessThanTests,
      tests greaterThanOrEqualToTests,
