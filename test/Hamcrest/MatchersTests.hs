@@ -8,106 +8,106 @@ import Test.QuickCheck
 import Hamcrest.Matchers
 import Hamcrest.Assertions (expectThat)
 
-isTests :: [(String, Int -> Property)]
+isTests :: [(String, (Int, Int) -> Property)]
 isTests =
     [("x is x",
-      \x -> expectThat x (is x)),
+      \(x, _) -> expectThat x (is x)),
 
      ("(is x) describes itself as \"is x\"",
-      \x -> expectThat (is x) (describesItselfAs ("is " ++ show x))),
+      \(x, _) -> expectThat (is x) (describesItselfAs ("is " ++ show x))),
      ("(is x) describes a mismatch for y as \"was y\"",
-      \x -> expectThat (is x) (describesAMismatchFor (x + 5) ("was " ++ show (x + 5))))]
+      \(x, y) -> expectThat (is x) (describesAMismatchFor y ("was " ++ show y)))]
 
-equalToTests :: [(String, Int -> Property)]
+equalToTests :: [(String, (Int, Int) -> Property)]
 equalToTests =
     [("x is equal to x",
-      \x -> expectThat x (equalTo x)),
-     ("x is not equal to (x + 1)",
-      \x -> expectThat x (not_ (equalTo (x + 1)))),
+      \(x, _) -> expectThat x (equalTo x)),
+     ("x is not equal to y",
+      \(x, y) -> x /= y ==> expectThat x (not_ (equalTo y))),
 
      ("(equalTo x) describes itself as \"x\"",
-      \x -> expectThat (equalTo x) (describesItselfAs (show x))),
+      \(x, _) -> expectThat (equalTo x) (describesItselfAs (show x))),
      ("(equalTo x) describes a mismatch for y as \"y\"",
-      \x -> expectThat (equalTo 123) (describesAMismatchFor x (show x)))]
+      \(x, y) -> expectThat (equalTo x) (describesAMismatchFor y (show y)))]
 
-greaterThanTests :: [(String, Int -> Property)]
+greaterThanTests :: [(String, (Int, Int) -> Property)]
 greaterThanTests =
-    [("x is greater than (x - 2)",
-      \x -> expectThat x (greaterThan (x - 2))),
-     ("x is not greater than (x + 1)",
-      \x -> expectThat x (not_ (greaterThan (x + 1)))),
+    [("x is greater than (x - n)",
+      \(x, y) -> x > y ==> expectThat x (greaterThan y)),
+     ("x is not greater than (x + n)",
+      \(x, y) -> x < y ==> expectThat x (not_ (greaterThan y))),
      ("x is not greater than x",
-      \x -> expectThat x (not_ (greaterThan x))),
+      \(x, _) -> expectThat x (not_ (greaterThan x))),
 
      ("(greaterThan x) describes itself as \"greater than x\"",
-      \x -> expectThat (greaterThan x) (describesItselfAs ("greater than " ++ show x))),
-     ("(greaterThan x) describes a mismatch for (x + 1) as \"(x + 1)\"",
-      \x -> expectThat (greaterThan x) (describesAMismatchFor (x + 1) (show $ x + 1)))]
+      \(x, _) -> expectThat (greaterThan x) (describesItselfAs ("greater than " ++ show x))),
+     ("(greaterThan x) describes a mismatch for y as \"y\"",
+      \(x, y) -> expectThat (greaterThan x) (describesAMismatchFor y (show y)))]
 
-lessThanTests :: [(String, Int -> Property)]
+lessThanTests :: [(String, (Int, Int) -> Property)]
 lessThanTests =
-    [("x is less than (x + 4)",
-      \x -> expectThat x (lessThan (x + 4))),
-     ("x is not less than (x - 1)",
-      \x -> expectThat x (not_ (lessThan (x - 1)))),
+    [("x is less than (x + n)",
+      \(x, y) -> x < y ==> expectThat x (lessThan y)),
+     ("x is not less than (x - n)",
+      \(x, y) -> x > y ==> expectThat x (not_ (lessThan y))),
      ("x is not less than x",
-      \x -> expectThat x (not_ (lessThan x))),
+      \(x, _) -> expectThat x (not_ (lessThan x))),
 
      ("(lessThan x) describes itself as \"less than x\"",
-      \x -> expectThat (lessThan x) (describesItselfAs ("less than " ++ show x))),
-     ("(lessThan x) describes a mismatch for (x - 6) as \"(x - 6)\"",
-      \x -> expectThat (lessThan x) (describesAMismatchFor (x - 6) (show $ x - 6)))]
+      \(x, _) -> expectThat (lessThan x) (describesItselfAs ("less than " ++ show x))),
+     ("(lessThan x) describes a mismatch for y as \"y\"",
+      \(x, y) -> expectThat (lessThan x) (describesAMismatchFor y (show y)))]
 
-greaterThanOrEqualToTests :: [(String, Int -> Property)]
+greaterThanOrEqualToTests :: [(String, (Int, Int) -> Property)]
 greaterThanOrEqualToTests =
-    [("x is greater than or equal to (x - 8)",
-      \x -> expectThat x (greaterThanOrEqualTo (x - 8))),
-     ("x is not greater than or equal to (x + 2)",
-      \x -> expectThat x (not_ (greaterThanOrEqualTo (x + 2)))),
+    [("x is greater than or equal to (x - n)",
+      \(x, y) -> x > y ==> expectThat x (greaterThanOrEqualTo y)),
+     ("x is not greater than or equal to (x + n)",
+      \(x, y) -> x < y ==> expectThat x (not_ (greaterThanOrEqualTo y))),
      ("x is greater than or equal to x",
-      \x -> expectThat x (greaterThanOrEqualTo x)),
+      \(x, _) -> expectThat x (greaterThanOrEqualTo x)),
 
      ("(greaterThanOrEqualTo x) describes itself as \"greater than or equal to x\"",
-      \x -> expectThat (greaterThanOrEqualTo x) (describesItselfAs ("greater than or equal to " ++ show x))),
-     ("(greaterThanOrEqualTo x) describes a mismatch for (x + 9) as \"(x + 9)\"",
-      \x -> expectThat (greaterThanOrEqualTo x) (describesAMismatchFor (x + 9) (show $ x + 9)))]
+      \(x, _) -> expectThat (greaterThanOrEqualTo x) (describesItselfAs ("greater than or equal to " ++ show x))),
+     ("(greaterThanOrEqualTo x) describes a mismatch for y as \"y\"",
+      \(x, y) -> expectThat (greaterThanOrEqualTo x) (describesAMismatchFor y (show y)))]
 
-lessThanOrEqualToTests :: [(String, Int -> Property)]
+lessThanOrEqualToTests :: [(String, (Int, Int) -> Property)]
 lessThanOrEqualToTests =
-    [("x is less than or equal to (x + 3)",
-      \x -> expectThat x (lessThanOrEqualTo (x + 3))),
-     ("x is not less than or equal to (x - 4)",
-      \x -> expectThat x (not_ (lessThanOrEqualTo (x - 4)))),
+    [("x is less than or equal to (x + n)",
+      \(x, y) -> x < y ==> expectThat x (lessThanOrEqualTo y)),
+     ("x is not less than or equal to (x - n)",
+      \(x, y) -> x > y ==> expectThat x (not_ (lessThanOrEqualTo y))),
      ("x is less than or equal to x",
-      \x -> expectThat x (lessThanOrEqualTo x)),
+      \(x, _) -> expectThat x (lessThanOrEqualTo x)),
 
      ("(lessThanOrEqualTo x) describes itself as \"less than or equal to x\"",
-      \x -> expectThat (lessThanOrEqualTo x) (describesItselfAs ("less than or equal to " ++ show x))),
-     ("(lessThanOrEqualTo x) describes a mismatch for (x - 1) as \"(x - 1)\"",
-      \x -> expectThat (lessThanOrEqualTo x) (describesAMismatchFor (x - 1) (show $ x - 1)))]
+      \(x, _) -> expectThat (lessThanOrEqualTo x) (describesItselfAs ("less than or equal to " ++ show x))),
+     ("(lessThanOrEqualTo x) describes a mismatch for y as \"y\"",
+      \(x, y) -> expectThat (lessThanOrEqualTo x) (describesAMismatchFor y (show y)))]
 
-equalToIgnoringCaseTests :: [(String, String -> Property)]
+equalToIgnoringCaseTests :: [(String, (String, String) -> Property)]
 equalToIgnoringCaseTests =
     [("\"ABCdef\" is equal to \"AbCdEf\" ignoring case",
-      \x -> expectThat x (equalToIgnoringCase (oscillatingCase x))),
+      \(x, _) -> expectThat x (equalToIgnoringCase (oscillatingCase x))),
      ("\"ABCdef\" is equal to \"abcdef\" ignoring case",
-      \x -> expectThat x (equalToIgnoringCase (map toLower x))),
+      \(x, _) -> expectThat x (equalToIgnoringCase (map toLower x))),
      ("\"ABCdef\" is equal to \"ABCDEF\" ignoring case",
-      \x -> expectThat x (equalToIgnoringCase (map toUpper x))),
+      \(x, _) -> expectThat x (equalToIgnoringCase (map toUpper x))),
      ("\"ABCdef\" is not equal to \"ABCdefGHI\"",
-      \x -> expectThat x (not_ (equalToIgnoringCase (x ++ "a")))),
+      \(x, y) -> length x /= length y ==> expectThat x (not_ (equalToIgnoringCase y))),
 
      ("(equalToIgnoringCase x) describes itself as \"x ignoring case\"",
-      \x -> expectThat (equalToIgnoringCase x) (describesItselfAs (show x ++ " ignoring case"))),
+      \(x, _) -> expectThat (equalToIgnoringCase x) (describesItselfAs (show x ++ " ignoring case"))),
      ("(equalToIgnoringCase x) describes a mismatch for y as \"y\"",
-      \x -> expectThat (equalToIgnoringCase x) (describesAMismatchFor (x ++ "bah") (show (x ++ "bah"))))]
+      \(x, y) -> expectThat (equalToIgnoringCase x) (describesAMismatchFor y (show y)))]
     where
     oscillatingCase string = oscillatingCase' True string
     oscillatingCase' _ "" = ""
     oscillatingCase' True (c : cs) = (toUpper c) : oscillatingCase' False cs
     oscillatingCase' False (c : cs) = (toLower c) : oscillatingCase' True cs
 
-tests :: (Show a, Arbitrary a) => [(String, a -> Property)] -> IO [Result]
+tests :: (Show a, Arbitrary a) => [(String, (a, a) -> Property)] -> IO [Result]
 tests cases = do
     mapM quickCheckResult $ map (uncurry label) cases
 
