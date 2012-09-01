@@ -9,6 +9,9 @@ not_ matcher = Matcher
       describeMismatch = describeMismatch matcher,
       matches = Prelude.not . (matches matcher) }
 
+anything :: (Show a) => Matcher a
+anything = Matcher "anything" show (\_ -> True)
+
 is expected = Matcher ("is " ++ show expected) (("was " ++) . show) (expected ==)
 
 equalTo expected = Matcher (show expected) show (expected ==)
@@ -25,7 +28,7 @@ equalToIgnoringCase expected = Matcher
     where
     upperCase = map toUpper
 
-describesItselfAs :: (Show a) => String -> Matcher (Matcher a)
+describesItselfAs :: String -> Matcher (Matcher a)
 describesItselfAs expected = Matcher
     { describe = "describes itself as " ++ (show expected),
       describeMismatch = ("described itself as " ++) . describe,

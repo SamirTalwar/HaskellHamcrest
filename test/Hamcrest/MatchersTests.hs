@@ -5,8 +5,19 @@ import Data.Char
 
 import Test.QuickCheck
 
+import Hamcrest
 import Hamcrest.Matchers
 import Hamcrest.Assertions (expectThat)
+
+anythingTests :: [(String, (String, String) -> Property)]
+anythingTests =
+    [("x is anything",
+      \(x, _) -> expectThat x anything),
+
+     ("anything describes itself as \"anything\"",
+      \(_, _) -> once $ expectThat (anything :: Matcher String) (describesItselfAs "anything")),
+     ("anything describes a mismatch for x as \"x\"",
+      \(x, _) -> expectThat anything (describesAMismatchFor x (show x)))]
 
 isTests :: [(String, (Int, Int) -> Property)]
 isTests =
@@ -112,7 +123,8 @@ tests cases = do
     mapM quickCheckResult $ map (uncurry label) cases
 
 hamcrestTests = (liftM concat) $ sequence
-    [tests isTests,
+    [tests anythingTests,
+     tests isTests,
      tests equalToTests,
      tests greaterThanTests,
      tests lessThanTests,
