@@ -8,30 +8,36 @@ import Test.QuickCheck
 import Hamcrest.Matchers
 import Hamcrest.Assertions (expectThat)
 
-anythingTests :: [(String, (String, String) -> Property)]
-anythingTests =
-    [("x is anything",
-      \(x, _) -> expectThat x anything),
-
-     ("anything describes itself as \"anything\"",
-      \(_, _) -> once $ expectThat (anything :: Matcher String) (describesItselfAs "anything")),
-     ("anything describes a mismatch for x as \"x\"",
-      \(x, _) -> expectThat anything (describesAMismatchFor x (show x)))]
-
 isTests :: [(String, (Int, Int) -> Property)]
 isTests =
     [("x is x",
       \(x, _) -> expectThat x (is x)),
 
      ("(is x) describes itself as \"is x\"",
-      \(x, _) -> expectThat (is x) (describesItselfAs ("is " ++ show x))),
+      \(x, _) -> expectThat (is' x) (describesItselfAs ("is " ++ show x))),
      ("(is x) describes a mismatch for y as \"was y\"",
       \(x, y) -> expectThat (is x) (describesAMismatchFor y ("was " ++ show y)))]
+    where
+    is' :: Int -> Matcher Int
+    is' = is
 
 notTests :: [(String, (String, String) -> Property)]
 notTests =
     [("x is not y",
      \(x, y) -> x /= y ==> expectThat x (not_ y))]
+
+anythingTests :: [(String, (String, String) -> Property)]
+anythingTests =
+    [("x is anything",
+      \(x, _) -> expectThat x (is anything')),
+
+     ("anything describes itself as \"anything\"",
+      \(_, _) -> once $ expectThat anything' (describesItselfAs "anything")),
+     ("anything describes a mismatch for x as \"x\"",
+      \(x, _) -> expectThat anything (describesAMismatchFor x (show x)))]
+    where
+    anything' :: Matcher String
+    anything' = anything
 
 equalToTests :: [(String, (Int, Int) -> Property)]
 equalToTests =

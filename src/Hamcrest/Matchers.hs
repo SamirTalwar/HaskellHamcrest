@@ -19,6 +19,13 @@ data Matcher a =
               describeMismatch :: a -> String,
               matches :: a -> Bool }
 
+is value = Matcher
+    { describe = "is " ++ describe matcher,
+      describeMismatch = ("was " ++) . describeMismatch matcher,
+      matches = matches matcher }
+    where
+    matcher = toMatcher value
+
 not_ value = Matcher
     { describe = "not " ++ describe matcher,
       describeMismatch = describeMismatch matcher,
@@ -28,8 +35,6 @@ not_ value = Matcher
 
 anything :: (Show a) => Matcher a
 anything = Matcher "anything" show (\_ -> True)
-
-is expected = Matcher ("is " ++ show expected) (("was " ++) . show) (expected ==)
 
 equalTo expected = Matcher (show expected) show (expected ==)
 
