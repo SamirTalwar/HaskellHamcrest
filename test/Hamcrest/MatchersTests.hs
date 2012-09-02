@@ -5,7 +5,6 @@ import Data.Char
 
 import Test.QuickCheck
 
-import Hamcrest
 import Hamcrest.Matchers
 import Hamcrest.Assertions (expectThat)
 
@@ -28,6 +27,11 @@ isTests =
       \(x, _) -> expectThat (is x) (describesItselfAs ("is " ++ show x))),
      ("(is x) describes a mismatch for y as \"was y\"",
       \(x, y) -> expectThat (is x) (describesAMismatchFor y ("was " ++ show y)))]
+
+notTests :: [(String, (String, String) -> Property)]
+notTests =
+    [("x is not y",
+     \(x, y) -> x /= y ==> expectThat x (not_ y))]
 
 equalToTests :: [(String, (Int, Int) -> Property)]
 equalToTests =
@@ -125,6 +129,7 @@ tests cases = do
 hamcrestTests = (liftM concat) $ sequence
     [tests anythingTests,
      tests isTests,
+     tests notTests,
      tests equalToTests,
      tests greaterThanTests,
      tests lessThanTests,

@@ -2,7 +2,7 @@ module Hamcrest.Assertions where
 
 import Test.QuickCheck
 
-import Hamcrest
+import Hamcrest.Matchers
 
 expectThat :: a -> Matcher a -> Property
 expectThat actual matcher = do

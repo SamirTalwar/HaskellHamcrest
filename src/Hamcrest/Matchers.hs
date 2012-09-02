@@ -1,13 +1,30 @@
+{-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE MultiParamTypeClasses #-}
+
 module Hamcrest.Matchers where
 
 import Data.Char
 
-import Hamcrest
+class Matchable a b where
+    toMatcher :: a -> Matcher b
 
-not_ matcher = Matcher
+instance Matchable (Matcher a) a where
+    toMatcher matcher = matcher
+
+instance (Eq a, Show a) => Matchable a a where
+    toMatcher value = equalTo value
+
+data Matcher a =
+    Matcher { describe :: String,
+              describeMismatch :: a -> String,
+              matches :: a -> Bool }
+
+not_ value = Matcher
     { describe = "not " ++ describe matcher,
       describeMismatch = describeMismatch matcher,
       matches = Prelude.not . (matches matcher) }
+    where
+    matcher = toMatcher value
 
 anything :: (Show a) => Matcher a
 anything = Matcher "anything" show (\_ -> True)
