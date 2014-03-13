@@ -123,16 +123,15 @@ equalToIgnoringCaseTests =
      ("(equalToIgnoringCase x) describes a mismatch for y as \"y\"",
       \(x, y) -> expectThat (equalToIgnoringCase x) (describesAMismatchFor y (show y)))]
     where
-    oscillatingCase string = oscillatingCase' True string
+    oscillatingCase = oscillatingCase' True
     oscillatingCase' _ "" = ""
-    oscillatingCase' True (c : cs) = (toUpper c) : oscillatingCase' False cs
-    oscillatingCase' False (c : cs) = (toLower c) : oscillatingCase' True cs
+    oscillatingCase' True (c : cs) = toUpper c : oscillatingCase' False cs
+    oscillatingCase' False (c : cs) = toLower c : oscillatingCase' True cs
 
 tests :: (Show a, Arbitrary a) => [(String, (a, a) -> Property)] -> IO [Result]
-tests cases = do
-    mapM quickCheckResult $ map (uncurry label) cases
+tests = mapM (quickCheckResult . uncurry label)
 
-hamcrestTests = (liftM concat) $ sequence
+hamcrestTests = liftM concat $ sequence
     [tests anythingTests,
      tests isTests,
      tests notTests,

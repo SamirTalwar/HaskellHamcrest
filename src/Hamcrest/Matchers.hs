@@ -12,7 +12,7 @@ instance Matchable (Matcher a) a where
     toMatcher matcher = matcher
 
 instance (Eq a, Show a) => Matchable a a where
-    toMatcher value = equalTo value
+    toMatcher = equalTo
 
 data Matcher a =
     Matcher { describe :: String,
@@ -29,12 +29,12 @@ is value = Matcher
 not_ value = Matcher
     { describe = "not " ++ describe matcher,
       describeMismatch = describeMismatch matcher,
-      matches = Prelude.not . (matches matcher) }
+      matches = Prelude.not . matches matcher }
     where
     matcher = toMatcher value
 
 anything :: (Show a) => Matcher a
-anything = Matcher "anything" show (\_ -> True)
+anything = Matcher "anything" show (const True)
 
 equalTo expected = Matcher (show expected) show (expected ==)
 
@@ -52,12 +52,12 @@ equalToIgnoringCase expected = Matcher
 
 describesItselfAs :: String -> Matcher (Matcher a)
 describesItselfAs expected = Matcher
-    { describe = "describes itself as " ++ (show expected),
+    { describe = "describes itself as " ++ show expected,
       describeMismatch = ("described itself as " ++) . describe,
       matches = (expected ==) . describe }
 
 describesAMismatchFor :: (Show a) => a -> String -> Matcher (Matcher a)
 describesAMismatchFor value expected = Matcher
-    { describe = "describes a mismatch for " ++ (show value) ++ " as " ++ (show expected),
+    { describe = "describes a mismatch for " ++ show value ++ " as " ++ show expected,
       describeMismatch = \matcher -> "described the mismatch as " ++ describeMismatch matcher value,
       matches = \matcher -> expected == describeMismatch matcher value }

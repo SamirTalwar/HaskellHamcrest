@@ -6,4 +6,4 @@ import Hamcrest.MatchersTests
 
 main = do
     results <- hamcrestTests
-    if all isSuccess results then exitWith ExitSuccess else exitWith (ExitFailure 1)
+    exitWith (if all isSuccess results then ExitSuccess else ExitFailure 1)
